@@ -1,7 +1,6 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
-using System.Net;
 
 namespace ChartGenerator
 {
