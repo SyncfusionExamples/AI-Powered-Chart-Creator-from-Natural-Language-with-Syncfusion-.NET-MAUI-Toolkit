@@ -1,6 +1,7 @@
-﻿using Azure.AI.OpenAI;
-using Azure;
+﻿using Azure;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
+using System.Net;
 
 namespace ChartGenerator
 {
@@ -73,7 +74,7 @@ namespace ChartGenerator
             {
                 if (Client != null)
                 {
-                    await Client!.CompleteAsync("Hello, Test Check");
+                    await Client!.GetResponseAsync("Hello, Test Check");
                     ChatHistory = string.Empty;
                     IsCredentialValid = true;
                     isAlreadyValidated = true;
@@ -97,11 +98,15 @@ namespace ChartGenerator
         {
             try
             {
-                var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(key)).AsChatClient(modelId: deploymentName);
-                this.Client = client;
+                Client = new AzureOpenAIClient(
+                new Uri(endpoint),
+                new AzureKeyCredential(key))
+                .GetChatClient(deploymentName)
+                .AsIChatClient();
             }
             catch (Exception)
             {
+                // Log or handle the exception according to your requirements
             }
         }
         #endregion
@@ -120,7 +125,7 @@ namespace ChartGenerator
                     ChatHistory = string.Empty;
                     // Add the system message and user message to the options
                     ChatHistory = ChatHistory + userPrompt;
-                    var response = await Client.CompleteAsync(ChatHistory);
+                    var response = await Client.GetResponseAsync(ChatHistory);
                     return response.ToString();
                 }
             }

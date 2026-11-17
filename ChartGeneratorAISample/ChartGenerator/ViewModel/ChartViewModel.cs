@@ -14,9 +14,9 @@ namespace ChartGenerator
         private bool showAssistView;
         private bool showHeader = true;
         private bool showIndicator = false;
-        private ChartConfig chartData;
-        private string oldJson;
-        private string newJson;
+        private ChartConfig? chartData;
+        private string? oldJson;
+        private string? newJson;
         private bool enableAssistant;
         private bool isLoading;
         private ObservableCollection<IAssistItem> messages = new();
@@ -43,7 +43,7 @@ namespace ChartGenerator
             }
         }
 
-        public ChartConfig ChartData
+        public ChartConfig? ChartData
         {
             get => chartData;
             set
@@ -183,7 +183,12 @@ namespace ChartGenerator
                     Messages.Add(message);
                 }
 
-                Application.Current.MainPage.Navigation.PushAsync(new ChartView(this));
+                var currentPage = Application.Current?.Windows.FirstOrDefault()?.Page;
+
+                if (currentPage is not null)
+                {
+                    await currentPage.Navigation.PushAsync(new ChartView(this));
+                }
                 IsLoading = false;
             }
         }
